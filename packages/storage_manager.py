@@ -6,7 +6,10 @@ def load_business_from_storage():
     saved_data = load_string_from_file("SaveFile.json")
     if saved_data is not None:
         json_converted = json.loads(saved_data)
-        return Business(json_converted["name"], int(json_converted["balance"]))
+        business = Business(json_converted["name"], int(json_converted["balance"]))
+        for element in json_converted["products"]:
+            business.add_product_from_json(json_converted["products"][element])
+        return business
     else:
         return False
 
@@ -18,7 +21,10 @@ def load_string_from_file(filepath):
     except:
         return None
     finally:
-        f.close()
+        try:
+            f.close()
+        except UnboundLocalError:
+            return
 
 
 def write_string_to_file(filepath, content):

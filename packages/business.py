@@ -5,11 +5,19 @@ from packages.storage_manager import write_string_to_file
 
 
 class Business:
-    products = [Product(1, "Hey"), Product(2, "Halla")]
+    products = []
 
     def __init__(self, name, initial_balance):
         self.name = name
         self.balance = initial_balance
+
+    def add_product(self, product):
+        self.products.append(product)
+
+    def add_product_from_json(self, element):
+        print(element["name"])
+        print(element["stock"])
+        self.add_product(Product(element["name"], element["stock"]))
 
     def to_dict(self):
         products_dicts = {}

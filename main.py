@@ -1,6 +1,8 @@
 import os
+import time
 
 from packages.business import Business
+from packages.product import Product
 from packages.storage_manager import load_business_from_storage
 
 business = load_business_from_storage()
@@ -40,8 +42,35 @@ def show_menu(title=None, message=None):
         print("Name: " + business.name)
         print("Balance: " + str(business.balance) + "kr")
         goto_menu_with_confirm()
+    elif chosen_command.lower() == "2":
+        manage_products()
     else:
         show_menu("Error", str(chosen_command) + " is not an option")
+
+
+def manage_products():
+    clear_console()
+    print("---------------- MANAGE PRODUCTS ----------------")
+    print("1) Add product")
+    print("2) Remove product")
+    print("3) Sell product")
+
+    chosen_command = input("Choose an option: ")
+
+    if chosen_command == "1":
+        print("------------------- ADD PRODUCT -------------------")
+        product_name = input("Product name: ")
+        stock = input("Amount currently in stock: ")
+        business.add_product(Product(product_name, stock))
+        business.save()
+        print()
+        print("Product added!")
+    else:
+        print("Unknown command")
+        time.sleep(1)
+        manage_products()
+
+    goto_menu_with_confirm()
 
 
 if business is False:
