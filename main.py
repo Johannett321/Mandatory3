@@ -57,15 +57,37 @@ def manage_products():
 
     chosen_command = input("Choose an option: ")
 
-    if chosen_command == "1":
+    if chosen_command == "1":  # adding a product
+        clear_console()
         print("------------------- ADD PRODUCT -------------------")
+
+        # get info about product name and stock
         product_name = input("Product name: ")
         stock = input("Amount currently in stock: ")
-        business.add_product(Product(product_name, stock))
+
+        # make sure stock is a number
+        try:
+            int(stock)
+        except ValueError:
+            print("Stock is supposed to be a number. '" + stock + "' is not a number")
+            manage_products()
+            return
+
+        # add the product and save
+        business.add_product(Product(product_name, int(stock)))
         business.save()
         print()
         print("Product added!")
-    else:
+    elif chosen_command == "3": # selling a product
+        clear_console()
+        print("------------------ SELL PRODUCT ------------------")
+        print("Please choose a product to sell:")
+        business.print_list_of_products()
+        product_to_sell = input("ProductID: ")
+        if business.sell_product(product_to_sell) is False:
+            manage_products()
+            return
+    else:  # unknown command
         print("Unknown command")
         time.sleep(1)
         manage_products()

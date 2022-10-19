@@ -19,6 +19,37 @@ class Business:
         print(element["stock"])
         self.add_product(Product(element["name"], element["stock"]))
 
+    def product_exists(self, product_id):
+        try:
+            for product in self.products:
+                if int(product.uid) == int(product_id):
+                    return True
+            return False
+        except TypeError:
+            print("Product ID should be a number")
+            return False
+
+    def get_product(self, product_id):
+        try:
+            for product in self.products:
+                print(str(product_id) + " is not " + str(product.uid))
+                if int(product.uid) == int(product_id):
+                    return product
+            return None
+        except TypeError:
+            print("Product ID should be a number")
+            return None
+
+    def sell_product(self, product_id):
+        if self.product_exists(product_id):
+            return self.get_product(product_id).sell(1)
+        print("Could not find product with productID: " + product_id)
+        return False
+
+    def print_list_of_products(self):
+        for product in self.products:
+            print(str(product.uid) + ") " + product.name + " (Stock: " + str(product.stock) + ")")
+
     def to_dict(self):
         products_dicts = {}
         for product in self.products:
