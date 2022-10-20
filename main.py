@@ -19,7 +19,7 @@ def goto_menu_with_confirm():
     show_menu()
 
 
-def go_back_with_message(message:str, back):
+def go_back_with_message(message: str, back):
     print(message)
     press_enter_to_continue()
     back()
@@ -67,7 +67,7 @@ def manage_products():
 
     # list all options
     for item_index in range(0, len(menu_items)):
-        print(str(item_index+1) + ") " + menu_items[item_index]["name"])
+        print(str(item_index + 1) + ") " + menu_items[item_index]["name"])
 
     # add go back option
     print("x) Go back")
@@ -79,7 +79,7 @@ def manage_products():
         return
 
     # make sure the user actually types something
-    if chosen_command.isnumeric() is False or int(chosen_command)-1 > len(menu_items):
+    if chosen_command.isnumeric() is False or int(chosen_command) - 1 > len(menu_items):
         go_back_with_message("You must choose one of the options", manage_products)
 
     # launch menu option chosen by user
@@ -92,8 +92,10 @@ def sell_product():
     print("Please choose a product to sell:")
     business.print_list_of_products()
 
-    # get productID
+    print()
     print("Type 'x' to cancel")
+
+    # get productID
     product_to_sell = input("ProductID: ")
 
     # let the user exit
@@ -103,13 +105,13 @@ def sell_product():
 
     # make sure the product exists
     if business.product_exists(product_to_sell) is False:
-        go_back_with_message("Could not find product with productID: " + product_to_sell, manage_products)
+        go_back_with_message("Could not find product with productID: " + product_to_sell, sell_product)
         return
 
     amount = input("Amount to sell: ")
 
     if amount.isnumeric() is not True:
-        go_back_with_message("Amount must be a number: " + amount, manage_products)
+        go_back_with_message("Amount must be a number: " + amount, sell_product)
         return
 
     if business.sell_product(product_to_sell, int(amount)) is False:
@@ -117,6 +119,8 @@ def sell_product():
         manage_products()
         return
     business.save()
+
+    # back to manage products menu
     press_enter_to_continue()
     manage_products()
 
@@ -138,6 +142,8 @@ def check_price():
 
     product = business.get_product(product_id)
     print(product.name + ": " + product.get_price_text())
+
+    # back to manage products menu
     press_enter_to_continue()
     manage_products()
 
@@ -161,6 +167,10 @@ def check_stock():
 
     product = business.get_product(product_id)
     print(product.name + " in stock: " + str(product.stock))
+
+    # back to manage products menu
+    press_enter_to_continue()
+    manage_products()
 
 
 def add_product():
@@ -193,6 +203,8 @@ def add_product():
     business.add_product(Product(product_name, int(stock), int(purchase_cost), int(price)))
     business.save()
     print("Product added!")
+
+    # back to manage products menu
     press_enter_to_continue()
     manage_products()
 
@@ -201,6 +213,7 @@ def delete_product():
     clear_console()
     print("---------------- REMOVE PRODUCT ----------------")
     business.print_list_of_products()
+    print()
     print("You can also type 'x' to go back")
     product_id = input("ProductID to delete: ")
 
@@ -214,7 +227,10 @@ def delete_product():
     if business.delete_product(product_id) is False:
         press_enter_to_continue()
         delete_product()
-        return
+
+    # back to manage products menu
+    press_enter_to_continue()
+    manage_products()
 
 
 def restock_product():
@@ -223,6 +239,7 @@ def restock_product():
     print("Please choose a product to restock:")
     business.print_list_of_products()
 
+    print()
     print("You can also type 'x' to go back")
     product_to_restock = input("ProductID: ")
 
@@ -231,9 +248,8 @@ def restock_product():
         manage_products()
         return
 
-    if product_to_restock == "":
-        go_back_with_message("ProductID cannot be empty", restock_product)
-        return
+    if business.product_exists(product_to_restock) is False:
+        go_back_with_message("Could not find product with productID: " + product_to_restock, restock_product)
 
     if business.get_product(product_to_restock) is None:
         go_back_with_message("Could not find product with productID: " + product_to_restock, restock_product)
@@ -249,14 +265,19 @@ def restock_product():
         manage_products()
         return
 
+    # back to manage products menu
+    press_enter_to_continue()
+    manage_products()
+
 
 def list_all_products_with_prices():
     clear_console()
     print("----------------- ALL PRODUCTS -----------------")
     business.print_list_of_products()
+
+    # back to manage products menu
     press_enter_to_continue()
     manage_products()
-    return
 
 
 def list_transactions():
@@ -266,6 +287,8 @@ def list_transactions():
         print("There are no transactions for this business yet")
     else:
         print(transactions)
+
+    # back to manage products menu
     press_enter_to_continue()
     manage_products()
 
@@ -285,8 +308,8 @@ def manage_discounts():
         manage_products()
         return
 
-    if business.get_product(product_id) is None:
-        go_back_with_message("Could not find productID: " + product_id, manage_discounts)
+    if business.product_exists(product_id) is False:
+        go_back_with_message("Could not find product with productID: " + product_id, manage_discounts)
 
     print("Please choose an available option: ")
     if business.get_product(product_id).discounted_price is None:
@@ -296,29 +319,30 @@ def manage_discounts():
         print("2) Remove discount")
 
     print("x) Go back")
-    choosen_option = input("Choose option: ").lower()
+    chosen_option = input("Choose option: ").lower()
 
-    if choosen_option.lower() == "x":
+    if chosen_option.lower() == "x":
         manage_products()
         return
 
     if business.get_product(product_id).discounted_price is None:
-        if choosen_option == "1":  # add discount
+        if chosen_option == "1":  # add discount
             discount_percent = input("Discount percent (without percentage symbol): ")
             if business.discount_product(product_id, int(discount_percent)) is False:
                 press_enter_to_continue()
                 manage_discounts()
                 return
     else:
-        if choosen_option == "1":  # modify discount
+        if chosen_option == "1":  # modify discount
             discount_percent = input("New percent (without percentage symbol): ")
             if business.discount_product(product_id, int(discount_percent)) is False:
                 press_enter_to_continue()
                 manage_discounts()
                 return
-        elif choosen_option == "2":  # remove discount
+        elif chosen_option == "2":  # remove discount
             print("")
 
+    # back to manage products menu
     press_enter_to_continue()
     manage_products()
 
