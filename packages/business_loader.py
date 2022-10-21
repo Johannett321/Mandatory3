@@ -1,7 +1,7 @@
 from packages import storage_manager
 from packages.business import Business
 from packages.storage_manager import load_business_from_storage, business_exists
-from packages.tools import clear_console, press_enter_to_continue, maybe_exit
+from packages.tools import clear_console, press_enter_to_continue, maybe_exit, get_version_number
 
 
 # menu where user can create a new business, or load existing business.
@@ -10,10 +10,14 @@ def get_business_from_menu():
     # print welcome message
     clear_console()
     print("WELCOME TO BWMS (Business Warehouse Management System)")
+    print("Version: " + get_version_number())
+    print()
+    print("Menu options:")
     print("1) Create a new business")
 
     # menu options shown if any businesses exists
-    if list_businesses() is not None:
+    business_list = list_businesses()
+    if business_list is not None and business_list != "":
         print("2) Open existing business")
         print("3) Delete business")
     print("x) Exit")
@@ -159,9 +163,9 @@ def list_businesses():
             businesses.replace(", ", "\n")
             return businesses
     except FileNotFoundError:  # false if no file is found
-        return False
+        return None
     finally:  # try to close file
         try:
             f.close()
         except UnboundLocalError:
-            return False
+            return None

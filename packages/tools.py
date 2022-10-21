@@ -4,6 +4,11 @@ import os
 debug_mode = False
 
 
+# version number
+def get_version_number():
+    return "1.0.0"
+
+
 # strike text
 def strike_text(text):
     result = ''

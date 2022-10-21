@@ -4,8 +4,10 @@ from packages.tools import strike_text
 
 
 class Product:
-    def __init__(self, name: str, stock: int, purchase_cost: int, price: int, discounted_price: int = None):
+    def __init__(self, name: str, stock: int, purchase_cost: int, price: int, uid: str = None, discounted_price: int = None):
         self.uid = random.randint(100000, 999999)
+        if uid is not None:  # user can add custom UID if wanted
+            self.uid = int(uid)
         self.name = name
         self.purchase_cost = purchase_cost
         self.price = price

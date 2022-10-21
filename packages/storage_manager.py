@@ -25,7 +25,7 @@ def load_business_from_storage(name_of_business):
         # create business object, and add all products to it
         business = Business(json_converted["name"], int(json_converted["balance"]))
         for element in json_converted["products"]:
-            business.add_product_from_json(json_converted["products"][element])
+            business.add_product_from_json(element, json_converted["products"][element])
         return business
     else:  # SaveFile.json returned empty string
         print("Failed to load business")

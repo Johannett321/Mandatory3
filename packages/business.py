@@ -18,10 +18,9 @@ class Business:
         self.products.append(product)
 
     # add a product from json object
-    def add_product_from_json(self, element):
-        self.add_product(Product(element["name"], element["stock"],
-                                 element["purchase_cost"], element["price"],
-                                 element["discounted_price"]))
+    def add_product_from_json(self, uid, element):
+        self.add_product(Product(element["name"], element["stock"], element["purchase_cost"],
+                                 element["price"], uid=uid, discounted_price=element["discounted_price"]))
 
     # delete a product from products list
     def delete_product(self, product_id):
@@ -56,7 +55,7 @@ class Business:
             return False
 
     # get a product by productID
-    def get_product(self, product_id):
+    def get_product(self, product_id) -> Product or None:
         try:
             for product in self.products:  # loop through all products and try to match
                 if int(product.uid) == int(product_id):  # found product
@@ -87,7 +86,7 @@ class Business:
 
             # add transaction to transaction history
             self.add_row_to_transactions("Sold " + str(amount_to_sell) + " " + product.name +
-                                         " for " + money_text(sold_for))
+                                         " for " + money_text(sold_for) + " each")
 
             # return result of product.sell in product class
             return product.sell(amount_to_sell)
@@ -114,6 +113,11 @@ class Business:
 
         # restock warehouse
         product.restock(amount)
+
+        # add transaction to transaction history
+        self.add_row_to_transactions("Bought " + str(amount) + " " + product.name +
+                                     " for " + money_text(product.purchase_cost) + " each")
+
         print(self.name + " puchased " + str(amount) + " " + product.name + " for " + money_text(total_purchase_cost) +
               ". " + self.name + "'s new balance is: " + money_text(self.balance))
 
@@ -141,6 +145,18 @@ class Business:
             return True
         else:
             return False  # failed: product does not exist, return false
+
+    # removes a discount from a product
+    def remove_discount(self, product_id) -> bool:
+        # remove business if product_id exists
+        if self.product_exists(product_id):
+            self.get_product(product_id).remove_discount()
+            self.save()
+            return True
+
+        # product was not found, tell user and return false
+        print("ProductID was not found: " + product_id)
+        return False
 
     # print a list of all products with corresponding information
     def print_list_of_products(self):

@@ -125,7 +125,7 @@ def sell_product():
     # sell product method
     if business.sell_product(product_to_sell, int(amount)) is False:
         press_enter_to_continue()
-        manage_products()
+        sell_product()
         return
 
     # save business
@@ -139,7 +139,7 @@ def sell_product():
 def check_price():
     clear_console()
     print("------------------ CHECK PRICE ------------------")
-    print("Please type the productID that you would like to check the price for:")
+    print("Please type the productID that you would like to check the price for")
     print_x_to_go_back()
     product_id = input("ProductID: ").lower()
 
@@ -165,7 +165,7 @@ def check_price():
 def check_stock():
     clear_console()
     print("------------------ CHECK STOCK ------------------")
-    print("Please type the productID that you would like to check the stock for:")
+    print("Please type the productID that you would like to check the stock for")
     print_x_to_go_back()
     product_id = input("ProductID: ").lower()
 
@@ -298,7 +298,7 @@ def restock_product():
     # restock the product
     if business.restock_product(product_to_restock, int(amount_to_restock)) is False:
         press_enter_to_continue()
-        manage_products()
+        restock_product()
         return
 
     # back to manage products menu
@@ -380,10 +380,14 @@ def manage_discounts():
     if business.get_product(product_id).discounted_price is None:
         if chosen_option == "1":  # add discount
             discount_percent = input("Discount percent (without percentage symbol): ")
+
+            # try to apply discount, if it fails, go back to manage discounts
             if business.discount_product(product_id, int(discount_percent)) is False:
                 press_enter_to_continue()
                 manage_discounts()
                 return
+        else:  # unknown option from user
+            go_back_with_message("'" + chosen_option + "' is not an option", manage_discounts)
     else:  # if product is not discounted
         if chosen_option == "1":  # modify discount
             discount_percent = input("New percent (without percentage symbol): ")
@@ -392,7 +396,11 @@ def manage_discounts():
                 manage_discounts()
                 return
         elif chosen_option == "2":  # remove discount
-            print("")
+            if business.remove_discount(product_id):
+                print("Discount was removed!")
+        else:  # unknown option from user
+            go_back_with_message("'" + chosen_option + "' is not an option", manage_discounts)
+            return
 
     # back to manage products menu
     press_enter_to_continue()
