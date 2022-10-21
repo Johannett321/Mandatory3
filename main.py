@@ -376,6 +376,7 @@ def manage_discounts():
         manage_products()
         return
 
+    # if product is discounted
     if business.get_product(product_id).discounted_price is None:
         if chosen_option == "1":  # add discount
             discount_percent = input("Discount percent (without percentage symbol): ")
@@ -383,7 +384,7 @@ def manage_discounts():
                 press_enter_to_continue()
                 manage_discounts()
                 return
-    else:
+    else:  # if product is not discounted
         if chosen_option == "1":  # modify discount
             discount_percent = input("New percent (without percentage symbol): ")
             if business.discount_product(product_id, int(discount_percent)) is False:
