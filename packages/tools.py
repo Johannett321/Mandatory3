@@ -22,7 +22,16 @@ def press_enter_to_continue():
     print("[PRESS ENTER TO CONTINUE]", end="")
     input()
 
+
 def maybe_exit():
     sure = input("Sure? (y/n)").lower()
     if sure == "y":
         exit(0)
+
+
+def print_x_to_go_back():
+    print("You can also type 'x' to go back")
+
+
+def print_x_to_exit():
+    print("You can also type 'x' to go exit")
